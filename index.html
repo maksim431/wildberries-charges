@@ -1,0 +1,702 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Платежи и подписки · концепт для Wildberries</title>
+<meta name="description" content="Концепт экрана «Платежи и подписки»: понятные списания, ближайшие платежи и отключение в одно касание. UX/UI: Максим Кощеев.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Токены, снятые с wildberries.ru (computed styles, --mo-*) */
+  --wb-header-from:#bd00de; --wb-header-to:#e007b8;
+  --accent:#a73afd;            /* --mo-purple-600, кнопки */
+  --accent-hover:#9715f4;      /* --mo-purple-500 */
+  --accent-10:#a73afd1a; --accent-bg:#fbf0ff; /* --mo-purple-970 */
+  --pink:#da0bb2;              /* --mo-deepPink-500 */
+  --text:#242424; --text-2:#8b8c8f; --text-3:#a0a3a9;
+  --bg-page:#f6f6f9;           /* --mo-neutralGray-970 */
+  --bg-muted:#efeff5;          /* --mo-neutralGray-950 */
+  --line:#e0e0eb;              /* --mo-neutralGray-900 */
+  --card:#fff;
+  --green:#00a839; --green-bg:#e9fcf2;
+  --red:#d72000; --red-bg:#ffeded;
+  --orange:#e55c00; --orange-bg:#fff1d6;
+  --r-xs:8px; --r-s:12px; --r-m:16px; --r-l:20px; --r-xl:24px; --r-full:100px;
+  --shadow:0 4px 16px rgba(36,36,36,.06);
+  --font:"Google Sans","Roboto","Segoe UI",-apple-system,"Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg-page)}
+body{font-family:var(--font);color:var(--text);font-size:15px;line-height:1.4;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+input{font:inherit}
+a{color:inherit;text-decoration:none}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* ---------- Шапка в стиле WB ---------- */
+.hdr{background:linear-gradient(180deg,var(--wb-header-from),var(--wb-header-to));color:#fff}
+.hdr-top{max-width:1240px;margin:0 auto;display:flex;align-items:center;gap:18px;padding:10px 20px 0;font-size:13px;opacity:.95;white-space:nowrap;overflow:hidden}
+.hdr-top span{opacity:.9}
+.hdr-main{max-width:1240px;margin:0 auto;display:flex;align-items:center;gap:20px;padding:12px 20px 16px}
+.brand{display:flex;align-items:center;gap:8px;font-weight:700;font-size:22px;letter-spacing:.5px}
+.brand small{font-size:11px;font-weight:500;letter-spacing:.3px;background:rgba(255,255,255,.22);padding:3px 8px;border-radius:var(--r-full)}
+.burger{width:44px;height:44px;border-radius:var(--r-s);border:1.5px solid rgba(255,255,255,.55);display:grid;place-items:center}
+.search{flex:1;display:flex;align-items:center;background:#fff;border-radius:var(--r-s);height:48px;padding:0 16px;color:var(--text-2);gap:10px}
+.hdr-icons{display:flex;gap:22px}
+.hdr-icons div{display:flex;flex-direction:column;align-items:center;font-size:12px;gap:3px}
+.hdr-icons .on{position:relative}
+.hdr-icons .on::after{content:"";position:absolute;bottom:-17px;left:0;right:0;height:3px;border-radius:3px;background:#fff}
+
+/* ---------- Каркас ---------- */
+.wrap{max-width:1240px;margin:0 auto;padding:20px 20px 64px}
+.crumbs{font-size:13px;color:var(--text-2);margin-bottom:14px;display:flex;gap:6px;align-items:center}
+.crumbs b{color:var(--text);font-weight:400}
+.layout>*{min-width:0}
+.layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:24px;align-items:start}
+.side{background:var(--card);border-radius:var(--r-xl);padding:12px;position:sticky;top:16px}
+.me{display:flex;gap:12px;align-items:center;padding:8px 10px 16px}
+.ava{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#c894ff,#ff80e6);display:grid;place-items:center;color:#fff;font-weight:700;font-size:18px}
+.me b{display:block;font-weight:500}
+.me span{font-size:13px;color:var(--text-2)}
+.side a{display:flex;align-items:center;justify-content:space-between;padding:11px 12px;border-radius:var(--r-s);font-size:15px}
+.side a:hover{background:var(--bg-page)}
+.side a.on{background:var(--accent-bg);color:var(--accent);font-weight:500}
+.side .new{font-size:11px;font-weight:500;background:var(--accent);color:#fff;border-radius:var(--r-full);padding:2px 7px}
+.side hr{border:0;height:1px;background:var(--bg-muted);margin:8px 12px}
+
+h1{font-size:28px;font-weight:700;line-height:1.15;margin-bottom:6px}
+.lead{color:var(--text-2);margin-bottom:20px}
+.card{background:var(--card);border-radius:var(--r-xl);padding:24px}
+.stack{display:flex;flex-direction:column;gap:16px}
+.sec-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:16px}
+.sec-h h2{font-size:20px;font-weight:700}
+.link{color:var(--accent);font-weight:500;font-size:14px}
+.link:hover{color:var(--accent-hover)}
+
+/* ---------- Сводка (hero) ---------- */
+.hero{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:0;padding:0;overflow:hidden;position:relative}
+.hero-body{padding:28px 28px 26px}
+.over{font-size:12px;letter-spacing:.6px;text-transform:uppercase;color:var(--text-2);font-weight:500;margin-bottom:10px}
+.next-sum{font-size:40px;font-weight:700;line-height:1;letter-spacing:-.5px}
+.next-sum .cur{font-size:28px}
+.next-meta{margin:8px 0 18px;color:var(--text-2)}
+.next-meta b{color:var(--text);font-weight:500}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:var(--r-full);background:var(--bg-page);font-size:13px;font-weight:500}
+.chip i{width:8px;height:8px;border-radius:50%;background:var(--accent);display:inline-block}
+.chip.ok i{background:var(--green)}
+.hero-art{background:linear-gradient(160deg,#fbf0ff 0%,#feecfd 55%,#fff 100%);position:relative;min-height:220px}
+.hero-art svg{position:absolute;right:-30px;bottom:-24px;width:330px;height:auto}
+.hero.empty .next-sum{font-size:28px}
+
+/* ---------- Напоминание о пробном периоде ---------- */
+.notice{display:flex;gap:14px;align-items:flex-start;background:var(--orange-bg);border-radius:var(--r-l);padding:16px 18px}
+.notice .ic{flex:none;width:36px;height:36px;border-radius:50%;background:#fff;display:grid;place-items:center;color:var(--orange)}
+.notice b{display:block;font-weight:500;margin-bottom:2px}
+.notice p{font-size:14px;color:#5c4a3a}
+.notice .acts{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+
+/* ---------- Кнопки (WB: плоские, радиус 12, акцент) ---------- */
+.btn{height:44px;padding:0 20px;border-radius:var(--r-s);font-weight:500;font-size:15px;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:background .15s,color .15s,transform .05s;white-space:nowrap}
+.btn:active{transform:scale(.98)}
+.btn-p{background:var(--accent);color:#fff}
+.btn-p:hover{background:var(--accent-hover)}
+.btn-s{background:var(--accent-bg);color:var(--accent)}
+.btn-s:hover{background:#f2e1ff}
+.btn-g{background:var(--bg-page);color:var(--text)}
+.btn-g:hover{background:var(--bg-muted)}
+.btn-w{background:#fff;color:var(--text)}
+.btn-d{background:var(--red-bg);color:var(--red)}
+.btn-d:hover{background:#ffdcdc}
+.btn-sm{height:36px;padding:0 14px;font-size:14px;border-radius:10px}
+.btn-l{height:52px;width:100%;font-size:16px}
+
+/* ---------- Активные услуги ---------- */
+.svc-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.svc{background:var(--card);border-radius:var(--r-xl);padding:20px;display:flex;flex-direction:column;gap:14px;transition:opacity .2s}
+.svc-top{display:flex;gap:14px;align-items:flex-start}
+.svc-ic{flex:none;width:48px;height:48px;border-radius:var(--r-m);display:grid;place-items:center}
+.svc-ic.club{background:linear-gradient(135deg,#b240ff,#ff18d2);color:#fff;font-weight:700;font-size:13px}
+.svc-ic.ins{background:#e8f9ff;color:#007acb}
+.svc h3{font-size:16px;font-weight:500;line-height:1.3}
+.svc .sub{font-size:13px;color:var(--text-2);margin-top:2px}
+.badge{display:inline-flex;align-items:center;height:24px;padding:0 9px;border-radius:var(--r-full);font-size:12px;font-weight:500;white-space:nowrap}
+.b-trial{background:var(--orange-bg);color:#b24800}
+.b-on{background:var(--green-bg);color:#007528}
+.b-off{background:var(--bg-muted);color:var(--text-2)}
+.b-ref{background:var(--green-bg);color:#007528}
+.svc-rows{background:var(--bg-page);border-radius:var(--r-m);padding:4px 14px}
+.svc-row{display:flex;justify-content:space-between;gap:10px;padding:9px 0;font-size:14px}
+.svc-row+.svc-row{border-top:1px solid var(--line)}
+.svc-row span{color:var(--text-2)}
+.svc-row b{font-weight:500;text-align:right}
+.progress{height:6px;background:var(--bg-muted);border-radius:6px;overflow:hidden}
+.progress i{display:block;height:100%;background:var(--accent);border-radius:6px}
+.p-cap{display:flex;justify-content:space-between;font-size:12px;color:var(--text-2);margin-top:6px}
+.svc-acts{display:flex;gap:8px;margin-top:auto}
+.svc-acts .btn{flex:1}
+.svc.off{opacity:.92}
+.svc.off .svc-ic{filter:grayscale(1);opacity:.55}
+
+/* ---------- Пустое состояние ---------- */
+.empty-state{display:none;grid-column:1/-1;text-align:center;padding:28px 24px 30px;background:var(--card);border-radius:var(--r-xl)}
+.empty-state svg{width:180px;height:auto;margin:0 auto 10px;display:block}
+.empty-state h3{font-size:18px;font-weight:700;margin-bottom:6px}
+.empty-state p{color:var(--text-2);max-width:420px;margin:0 auto 16px;font-size:14px}
+
+/* ---------- История ---------- */
+.hist-tools{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.tabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;max-width:100%}
+.tabs::-webkit-scrollbar{display:none}
+.tab{height:36px;padding:0 14px;border-radius:var(--r-full);background:var(--bg-page);font-size:14px;font-weight:500;white-space:nowrap;flex:none}
+.tab:hover{background:var(--bg-muted)}
+.tab.on{background:var(--text);color:#fff}
+.tab em{font-style:normal;opacity:.55;margin-left:4px}
+.find-btn{display:inline-flex;align-items:center;gap:6px}
+.month{font-size:13px;color:var(--text-2);font-weight:500;padding:16px 0 6px}
+.row{display:grid;grid-template-columns:44px 1fr auto;gap:14px;align-items:center;padding:12px 10px;margin:0 -10px;border-radius:var(--r-m);cursor:pointer;text-align:left;width:calc(100% + 20px);transition:background .15s}
+.row:hover{background:var(--bg-page)}
+.row.hl{background:var(--accent-bg);box-shadow:inset 0 0 0 1.5px var(--accent)}
+.row-ic{width:44px;height:44px;border-radius:var(--r-s);display:grid;place-items:center;background:var(--bg-page)}
+.row-ic.t-sub{background:linear-gradient(135deg,#b240ff,#ff18d2);color:#fff;font-weight:700;font-size:11px}
+.row-ic.t-svc{background:#e8f9ff;color:#007acb}
+.row-ic.t-ref{background:var(--green-bg);color:var(--green)}
+.row-t{min-width:0}
+.row-t b{display:block;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row-t span{display:block;font-size:13px;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row-s{text-align:right}
+.row-s b{display:block;font-weight:500;white-space:nowrap}
+.row-s b.plus{color:var(--green)}
+.row-s span{font-size:12px;color:var(--text-2);white-space:nowrap}
+.hist-empty{display:none;text-align:center;padding:30px 10px 10px;color:var(--text-2);font-size:14px}
+.hist-empty b{display:block;color:var(--text);font-size:16px;margin-bottom:4px}
+
+/* ---------- Шторка / модалка ---------- */
+.scrim{position:fixed;inset:0;background:rgba(20,16,30,.45);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .2s;z-index:40}
+.scrim.on{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:50%;top:50%;width:min(520px,calc(100% - 32px));max-height:calc(100% - 48px);overflow:auto;background:#fff;border-radius:var(--r-xl);padding:24px;z-index:50;transform:translate(-50%,-46%);opacity:0;pointer-events:none;transition:transform .25s var(--ease,cubic-bezier(.22,1,.36,1)),opacity .2s}
+.sheet.on{transform:translate(-50%,-50%);opacity:1;pointer-events:auto}
+.sheet-x{position:absolute;right:14px;top:14px;width:36px;height:36px;border-radius:50%;background:var(--bg-page);display:grid;place-items:center}
+.sheet h3{font-size:22px;font-weight:700;line-height:1.2;padding-right:40px;margin-bottom:6px}
+.sheet .s-sub{color:var(--text-2);margin-bottom:18px}
+.kv{background:var(--bg-page);border-radius:var(--r-m);padding:4px 16px;margin-bottom:16px}
+.kv div{display:flex;justify-content:space-between;gap:16px;padding:11px 0;font-size:14px}
+.kv div+div{border-top:1px solid var(--line)}
+.kv span{color:var(--text-2)}
+.kv b{font-weight:500;text-align:right}
+.bank{display:flex;gap:12px;align-items:center;border:1.5px dashed var(--line);border-radius:var(--r-m);padding:12px 14px;margin-bottom:16px;font-size:13px;color:var(--text-2)}
+.bank code{font-family:ui-monospace,Menlo,Consolas,monospace;color:var(--text);font-size:13px;background:var(--bg-page);padding:2px 6px;border-radius:6px}
+.why{background:var(--accent-bg);border-radius:var(--r-m);padding:14px 16px;font-size:14px;margin-bottom:18px}
+.why b{display:block;color:var(--accent);font-weight:500;margin-bottom:4px}
+.s-acts{display:flex;flex-direction:column;gap:8px}
+.lose{list-style:none;margin-bottom:16px}
+.lose li{display:flex;gap:10px;align-items:flex-start;padding:7px 0;font-size:14px}
+.lose li::before{content:"";flex:none;width:20px;height:20px;border-radius:50%;background:var(--accent-bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 6.2l2.3 2.3 4.7-5' fill='none' stroke='%23a73afd' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center no-repeat}
+.amount-field{display:flex;align-items:center;background:var(--bg-page);border-radius:var(--r-s);height:52px;padding:0 16px;margin-bottom:8px;border:1.5px solid transparent}
+.amount-field:focus-within{border-color:var(--accent);background:#fff}
+.amount-field input{flex:1;border:0;background:none;outline:none;font-size:18px;font-weight:500;min-width:0}
+.amount-field span{color:var(--text-2);font-size:18px}
+.hint{font-size:13px;color:var(--text-2);margin-bottom:16px}
+.res{margin-bottom:16px}
+.res-item{display:flex;justify-content:space-between;gap:10px;align-items:center;background:var(--bg-page);border-radius:var(--r-m);padding:12px 14px;margin-bottom:8px;width:100%;text-align:left}
+.res-item:hover{background:var(--bg-muted)}
+.res-item b{font-weight:500}
+.res-item span{font-size:13px;color:var(--text-2);display:block}
+.res-none{background:var(--orange-bg);border-radius:var(--r-m);padding:14px 16px;font-size:14px;color:#5c4a3a}
+.res-none b{display:block;color:var(--text);margin-bottom:4px}
+.opt{display:flex;gap:12px;align-items:center;background:var(--bg-page);border-radius:var(--r-m);padding:14px;width:100%;text-align:left;margin-bottom:8px}
+.opt:hover{background:var(--bg-muted)}
+.opt b{display:block;font-weight:500}
+.opt span{font-size:13px;color:var(--text-2)}
+.opt svg{flex:none;margin-left:auto;color:var(--text-3)}
+
+/* ---------- О концепции ---------- */
+.about h3{font-size:24px}
+.about-grid{display:grid;gap:10px;margin:14px 0 16px}
+.about-grid div{background:var(--bg-page);border-radius:var(--r-m);padding:12px 14px;font-size:14px}
+.about-grid b{display:block;font-size:12px;letter-spacing:.5px;text-transform:uppercase;color:var(--accent);margin-bottom:3px}
+.author{font-size:13px;color:var(--text-2);margin:4px 0 16px;line-height:1.5}
+.author a{color:var(--accent);font-weight:500}
+.about-art{height:120px;margin:-24px -24px 18px;border-radius:var(--r-xl) var(--r-xl) 0 0;background:linear-gradient(120deg,var(--wb-header-from),var(--wb-header-to));position:relative;overflow:hidden}
+.about-art svg{position:absolute;right:8px;bottom:-30px;width:210px}
+.about-art span{position:absolute;left:24px;top:22px;color:#fff;font-size:12px;font-weight:500;letter-spacing:.6px;text-transform:uppercase;background:rgba(255,255,255,.2);padding:5px 10px;border-radius:var(--r-full)}
+
+/* ---------- Тост ---------- */
+.toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);background:#242424;color:#fff;border-radius:var(--r-m);padding:13px 16px;display:flex;align-items:center;gap:12px;font-size:14px;z-index:60;opacity:0;pointer-events:none;transition:all .25s;max-width:calc(100% - 32px);box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.toast.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+.toast .ok{width:22px;height:22px;border-radius:50%;background:var(--green);display:grid;place-items:center;flex:none}
+.toast button{color:#d7b2ff;font-weight:500;margin-left:6px}
+
+.fab{position:fixed;right:20px;bottom:20px;z-index:30;height:44px;padding:0 16px;border-radius:var(--r-full);background:#fff;box-shadow:var(--shadow);font-size:13px;font-weight:500;display:flex;align-items:center;gap:8px}
+.fab i{width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-style:normal;font-size:13px;font-weight:700}
+
+.foot{font-size:12px;color:var(--text-3);text-align:center;margin-top:28px}
+
+/* ---------- Мобильная нижняя панель ---------- */
+.tabbar{display:none}
+
+@media (max-width:1000px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  .side{display:none}
+}
+@media (max-width:760px){
+  .svc-grid{grid-template-columns:minmax(0,1fr)}
+  .hero{grid-template-columns:minmax(0,1fr)}
+  .hero-art{min-height:0;height:120px;order:-1}
+  .hero-art svg{width:220px;right:-10px;bottom:-40px}
+}
+@media (max-width:560px){
+  body{font-size:15px}
+  .hdr-top,.hdr-icons{display:none}
+  .hdr-main{padding:12px 16px 14px;gap:10px;flex-wrap:wrap}
+  .search{flex:1 0 100%;order:3}
+  .brand{font-size:18px}
+  .burger{display:none}
+  .search{height:44px}
+  .wrap{padding:16px 16px 96px}
+  h1{font-size:24px}
+  .card,.svc{padding:18px;border-radius:var(--r-l)}
+  .hero{padding:0}
+  .hero-body{padding:20px 18px}
+  .next-sum{font-size:34px}
+  .sec-h h2{font-size:18px;white-space:nowrap}
+  .sec-h{flex-wrap:wrap;row-gap:6px}
+  .row{grid-template-columns:40px 1fr auto;gap:12px}
+  .row-ic{width:40px;height:40px}
+  .sheet{left:0;right:0;top:auto;bottom:0;width:100%;max-height:92%;border-radius:var(--r-xl) var(--r-xl) 0 0;transform:translateY(100%);padding:22px 16px calc(20px + env(safe-area-inset-bottom))}
+  .sheet.on{transform:translateY(0)}
+  .notice .acts .btn{flex:1}
+  .tabbar{display:flex;position:fixed;left:0;right:0;bottom:0;background:#fff;z-index:30;justify-content:space-around;padding:8px 4px calc(8px + env(safe-area-inset-bottom));box-shadow:0 -1px 0 var(--line)}
+  .tabbar div{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;color:var(--text-2);min-width:56px}
+  .tabbar div.on{color:var(--accent)}
+  .fab{bottom:76px;right:12px;height:44px;width:44px;padding:0;justify-content:center}
+  .fab span{display:none}
+  .toast{bottom:84px}
+  .about-art{margin:-22px -16px 18px}
+}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-top"><span>Москва</span><span>Wibes</span><span>Отели</span><span>Авиабилеты</span><span>WB Клуб</span><span>Бренды</span><span>Track</span><span>Для бизнеса</span></div>
+  <div class="hdr-main">
+    <div class="burger" aria-hidden="true"><svg width="20" height="14" viewBox="0 0 20 14"><path d="M1 1h18M1 7h18M1 13h18" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></div>
+    <div class="brand">WILDBERRIES <small>концепт</small></div>
+    <div class="search"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M20 20l-3.5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Найти на Wildberries</div>
+    <div class="hdr-icons">
+      <div><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 21s-7-4.5-7-10a7 7 0 0114 0c0 5.5-7 10-7 10z" stroke="#fff" stroke-width="1.8"/><circle cx="12" cy="11" r="2.5" stroke="#fff" stroke-width="1.8"/></svg>Адреса</div>
+      <div class="on"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#fff" stroke-width="1.8"/><path d="M4 21c1-4 4.5-6 8-6s7 2 8 6" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>Профиль</div>
+      <div><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M3 4h2l2.4 11.2a2 2 0 002 1.6h7.8a2 2 0 002-1.5L21 8H6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.5" r="1.3" fill="#fff"/><circle cx="17" cy="20.5" r="1.3" fill="#fff"/></svg>Корзина</div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="crumbs" aria-label="Хлебные крошки">Профиль <span>›</span> Финансы <span>›</span> <b>Платежи и подписки</b></nav>
+
+  <div class="layout">
+    <aside class="side" aria-label="Меню профиля">
+      <div class="me"><div class="ava">А</div><div><b>Анна Смирнова</b><span>+7 916 ••• •• 42</span></div></div>
+      <a href="#">Доставки</a>
+      <a href="#">Покупки</a>
+      <a href="#">Возвраты</a>
+      <a href="#">Избранное</a>
+      <hr>
+      <a href="#">WB Кошелёк</a>
+      <a href="#">Способы оплаты</a>
+      <a href="#" class="on">Платежи и подписки <span class="new">новое</span></a>
+      <hr>
+      <a href="#">Мои данные</a>
+      <a href="#">Поддержка</a>
+    </aside>
+
+    <div>
+      <h1>Платежи и подписки</h1>
+      <p class="lead">Все списания Wildberries в одном месте: за что, когда и как отключить</p>
+
+      <div class="stack">
+        <!-- Сводка -->
+        <section class="card hero" id="hero">
+          <div class="hero-body">
+            <div class="over">Ближайшее списание</div>
+            <div class="next-sum" id="nextSum">199 <span class="cur">₽</span></div>
+            <div class="next-meta" id="nextMeta"><b>12 октября</b> · WB Клуб, после пробного месяца · с карты Мир •• 4417</div>
+            <div class="chips" id="heroChips">
+              <span class="chip"><i></i><span id="activeCount">2 платные услуги</span></span>
+              <span class="chip ok"><i></i>Возвращено за месяц: <span id="refundTotal">&nbsp;4 590 ₽</span></span>
+            </div>
+          </div>
+          <div class="hero-art" aria-hidden="true">
+            <svg viewBox="0 0 330 250" fill="none">
+              <defs>
+                <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#b240ff"/><stop offset="1" stop-color="#ff40da"/></linearGradient>
+                <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#f2e1ff"/></linearGradient>
+                <linearGradient id="g3" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e6ccff"/><stop offset="1" stop-color="#fff"/></linearGradient>
+                <filter id="sh" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="12" stdDeviation="12" flood-color="#9715f4" flood-opacity=".18"/></filter>
+              </defs>
+              <!-- календарь -->
+              <g filter="url(#sh)" transform="rotate(-8 90 120)">
+                <rect x="40" y="70" width="120" height="130" rx="26" fill="url(#g2)"/>
+                <rect x="40" y="70" width="120" height="36" rx="26" fill="url(#g1)"/>
+                <rect x="40" y="90" width="120" height="16" fill="url(#g1)"/>
+                <text x="100" y="172" text-anchor="middle" font-family="Roboto,Arial" font-weight="700" font-size="54" fill="#9715f4">12</text>
+                <circle cx="72" cy="66" r="7" fill="#e6ccff"/><circle cx="128" cy="66" r="7" fill="#e6ccff"/>
+              </g>
+              <!-- чек -->
+              <g filter="url(#sh)" transform="rotate(6 220 130)">
+                <path d="M170 40h110a14 14 0 0114 14v160l-14-10-14 10-14-10-14 10-14-10-14 10-14-10-14 10-14-10V54a14 14 0 0114-14z" fill="#fff"/>
+                <rect x="190" y="66" width="70" height="10" rx="5" fill="#e6ccff"/>
+                <rect x="190" y="88" width="88" height="8" rx="4" fill="#efeff5"/>
+                <rect x="190" y="104" width="60" height="8" rx="4" fill="#efeff5"/>
+                <rect x="190" y="120" width="76" height="8" rx="4" fill="#efeff5"/>
+                <rect x="190" y="148" width="88" height="26" rx="13" fill="url(#g1)"/>
+                <text x="234" y="166" text-anchor="middle" font-family="Roboto,Arial" font-weight="700" font-size="14" fill="#fff">199 ₽</text>
+              </g>
+              <!-- монета-галочка -->
+              <g filter="url(#sh)"><circle cx="150" cy="200" r="30" fill="url(#g3)"/><circle cx="150" cy="200" r="22" fill="#fff"/><path d="M139 200l8 8 14-15" stroke="#00a839" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></g>
+            </svg>
+          </div>
+        </section>
+
+        <!-- Напоминание -->
+        <div class="notice" id="trialNotice" role="status">
+          <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+          <div>
+            <b>Пробный месяц WB Клуба за 1 ₽ закончится через 6 дней</b>
+            <p>12 октября спишем 199 ₽ и будем списывать каждый месяц. Если клуб не нужен, отключите сейчас: скидки и бесплатная смена пункта выдачи останутся до 12 октября.</p>
+            <div class="acts">
+              <button class="btn btn-w btn-sm" data-open="club-keep">Оставить клуб</button>
+              <button class="btn btn-sm" style="background:transparent;color:#b24800" data-action="cancel-club">Отключить</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Активные услуги -->
+        <section>
+          <div class="sec-h"><h2>Платные услуги</h2><a href="#" class="link" data-open="what">Что здесь бывает?</a></div>
+          <div class="svc-grid" id="svcGrid">
+            <div class="empty-state" id="svcEmpty">
+              <svg viewBox="0 0 200 130" fill="none" aria-hidden="true">
+                <defs><linearGradient id="e1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e6ccff"/><stop offset="1" stop-color="#fff"/></linearGradient></defs>
+                <ellipse cx="100" cy="118" rx="70" ry="8" fill="#efeff5"/>
+                <rect x="40" y="22" width="120" height="86" rx="22" fill="url(#e1)"/>
+                <rect x="58" y="44" width="54" height="10" rx="5" fill="#fff"/>
+                <rect x="58" y="62" width="84" height="8" rx="4" fill="#fff"/>
+                <circle cx="146" cy="30" r="20" fill="#fff"/><path d="M137 30l7 7 11-12" stroke="#00a839" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <h3>Активных платных услуг нет</h3>
+              <p>Без вашего согласия мы ничего не спишем. Если подключите клуб или страховку, они появятся здесь вместе с датой списания.</p>
+              <button class="btn btn-s" data-action="restore">Вернуть как было (демо)</button>
+            </div>
+
+            <article class="svc" id="svc-club">
+              <div class="svc-top">
+                <div class="svc-ic club">клуб</div>
+                <div style="flex:1;min-width:0">
+                  <h3>WB Клуб · Шопинг</h3>
+                  <div class="sub">Подключён 12 сентября, при оформлении заказа</div>
+                </div>
+                <span class="badge b-trial" id="clubBadge">Пробный</span>
+              </div>
+              <div class="svc-rows">
+                <div class="svc-row"><span>Сейчас</span><b>1 ₽ за первый месяц</b></div>
+                <div class="svc-row"><span id="clubNextLabel">Следующее списание</span><b id="clubNext">199 ₽ · 12 октября</b></div>
+                <div class="svc-row"><span>Дальше</span><b id="clubAfter">199 ₽ каждый месяц</b></div>
+              </div>
+              <div>
+                <div class="progress"><i id="clubBar" style="width:80%"></i></div>
+                <div class="p-cap"><span>12 сен</span><span id="clubLeft">осталось 6 дней</span><span>12 окт</span></div>
+              </div>
+              <div class="svc-acts" id="clubActs">
+                <button class="btn btn-g" data-open="club-info">Что даёт</button>
+                <button class="btn btn-d" data-action="cancel-club">Отключить</button>
+              </div>
+            </article>
+
+            <article class="svc" id="svc-ins">
+              <div class="svc-top">
+                <div class="svc-ic ins"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 3l7 3v5.5c0 4.4-3 8.2-7 9.5-4-1.3-7-5.1-7-9.5V6l7-3z" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                <div style="flex:1;min-width:0">
+                  <h3>Страховка заказа</h3>
+                  <div class="sub">Заказ от 3 октября · Робот-пылесос Kitfort KT-5132</div>
+                </div>
+                <span class="badge b-on" id="insBadge">Действует</span>
+              </div>
+              <div class="svc-rows">
+                <div class="svc-row"><span>Списано</span><b>149 ₽ · 3 октября</b></div>
+                <div class="svc-row"><span>Как подключена</span><b>Галочка при оформлении</b></div>
+                <div class="svc-row"><span id="insRefLabel">Отказаться с возвратом</span><b id="insRef">до 17 октября</b></div>
+              </div>
+              <div>
+                <div class="progress"><i id="insBar" style="width:21%"></i></div>
+                <div class="p-cap"><span>3 окт</span><span id="insLeft">ещё 11 дней на отказ</span><span>17 окт</span></div>
+              </div>
+              <div class="svc-acts" id="insActs">
+                <button class="btn btn-g" data-open="ins-info">Что покрывает</button>
+                <button class="btn btn-d" data-action="cancel-ins">Отказаться</button>
+              </div>
+            </article>
+
+          </div>
+        </section>
+
+        <!-- История -->
+        <section class="card">
+          <div class="sec-h" style="margin-bottom:12px"><h2>История списаний</h2><button class="link find-btn" data-open="find"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M20 20l-3.5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Не узнаю списание</button></div>
+          <div class="hist-tools">
+            <div class="tabs" role="tablist" id="tabs"></div>
+          </div>
+          <div id="hist"></div>
+          <div class="hist-empty" id="histEmpty"><b>Здесь пока пусто</b>Возвратов денег за последние 3 месяца не было</div>
+        </section>
+      </div>
+
+      <p class="foot">Концепт. Не связан с компанией Wildberries, данные вымышлены.</p>
+    </div>
+  </div>
+</main>
+
+<button class="fab" data-open="about" aria-label="О концепции"><i>i</i><span>О концепции</span></button>
+
+<nav class="tabbar" aria-label="Нижнее меню">
+  <div><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M4 10l8-6 8 6v9a1 1 0 01-1 1h-4v-6h-6v6H5a1 1 0 01-1-1v-9z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Главная</div>
+  <div><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="7" height="7" rx="2" stroke="currentColor" stroke-width="1.8"/><rect x="13" y="4" width="7" height="7" rx="2" stroke="currentColor" stroke-width="1.8"/><rect x="4" y="13" width="7" height="7" rx="2" stroke="currentColor" stroke-width="1.8"/><rect x="13" y="13" width="7" height="7" rx="2" stroke="currentColor" stroke-width="1.8"/></svg>Каталог</div>
+  <div><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M3 4h2l2.4 11.2a2 2 0 002 1.6h7.8a2 2 0 002-1.5L21 8H6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Корзина</div>
+  <div><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 20s-7-4.4-7-10a4 4 0 017-2.6A4 4 0 0119 10c0 5.6-7 10-7 10z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Избранное</div>
+  <div class="on"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.8"/><path d="M4 21c1-4 4.5-6 8-6s7 2 8 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Профиль</div>
+</nav>
+
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+  <button class="sheet-x" id="sheetX" aria-label="Закрыть"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M1 1l12 12M13 1L1 13" stroke="#242424" stroke-width="2" stroke-linecap="round"/></svg></button>
+  <div id="sheetBody"></div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"><span class="ok"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2.5 6.2l2.3 2.3 4.7-5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span id="toastText"></span><button id="toastUndo" hidden>Отменить</button></div>
+
+<script>
+(function(){
+  "use strict";
+  var state = { club:"trial", ins:"on", tab:"all", hl:null };
+
+  var ICON = {
+    order:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M5 8h14l-1.2 11.1a2 2 0 01-2 1.9H8.2a2 2 0 01-2-1.9L5 8z" stroke="#242424" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 8V6.5a3 3 0 016 0V8" stroke="#242424" stroke-width="1.8" stroke-linecap="round"/></svg>',
+    sub:'клуб',
+    svc:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3l7 3v5.5c0 4.4-3 8.2-7 9.5-4-1.3-7-5.1-7-9.5V6l7-3z" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg>',
+    ret:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 12h12M10 6l-6 6 6 6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" transform="rotate(180 12 12)"/></svg>',
+    ref:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M20 12H8M14 6l-6 6 6 6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+  };
+
+  var items = [
+    {id:"o1", type:"order", month:"Октябрь", date:"6 октября, 14:21", title:"Заказ: 3 товара", note:"Футболка, носки, чехол для телефона", sum:2847, bank:"WILDBERRIES 2847.00", why:"Оплата заказа при оформлении. Деньги заморожены до получения, списываются после выкупа.", status:"Списано"},
+    {id:"i1", type:"svc", month:"Октябрь", date:"3 октября, 19:05", title:"Страховка заказа", note:"Отмечена при оформлении заказа от 3 октября", sum:149, bank:"WILDBERRIES 149.00", why:"При оформлении был отмечен пункт «Застраховать заказ». Отказаться с возвратом можно 14 дней, до 17 октября.", status:"Списано", act:"cancel-ins"},
+    {id:"o2", type:"order", month:"Октябрь", date:"3 октября, 19:05", title:"Заказ: робот-пылесос", note:"Kitfort KT-5132", sum:12490, bank:"WILDBERRIES 12490.00", why:"Оплата заказа при оформлении.", status:"Списано"},
+    {id:"r1", type:"svc", month:"Сентябрь", date:"28 сентября, 11:40", title:"Обратная доставка", note:"Возврат кроссовок, товар без брака", sum:100, bank:"WILDBERRIES 100.00", why:"Платный возврат товара надлежащего качества: вы вернули кроссовки, потому что не подошёл размер. При возврате по браку обратная доставка бесплатная.", status:"Списано"},
+    {id:"s1", type:"sub", month:"Сентябрь", date:"12 сентября, 09:12", title:"WB Клуб · пробный месяц", note:"Подключён при оформлении заказа", sum:1, bank:"WILDBERRIES 1.00", why:"При оформлении заказа вы выбрали «Попробовать месяц за 1 ₽». Дальше 199 ₽ в месяц, следующее списание 12 октября.", status:"Списано", act:"cancel-club"},
+    {id:"f1", type:"ref", month:"Сентябрь", date:"2 сентября, 16:30", title:"Возврат денег за куртку", note:"Пуховик женский, возврат принят", sum:-4590, bank:"WILDBERRIES возврат 4590.00", why:"Товар принят на возврат, деньги ушли на карту Мир •• 4417.", status:"Возвращено"},
+    {id:"o3", type:"order", month:"Август", date:"25 августа, 21:03", title:"Заказ: 2 товара", note:"Контейнеры для еды, губки", sum:640, bank:"WILDBERRIES 640.00", why:"Оплата заказа при оформлении.", status:"Списано"}
+  ];
+  var TABS = [["all","Все"],["order","Заказы"],["sub","Подписки"],["svc","Услуги"],["ref","Возвраты"]];
+  var TYPE_LABEL = {order:"Заказ", sub:"Подписка", svc:"Услуга", ref:"Возврат денег"};
+
+  function $(s){return document.querySelector(s)}
+  function fmt(n){return Math.abs(n).toLocaleString("ru-RU").replace(/ /g," ")+" ₽"}
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+
+  /* ---------- История ---------- */
+  function renderTabs(){
+    $("#tabs").innerHTML = TABS.map(function(t){
+      var c = t[0]==="all" ? items.length : items.filter(function(i){return i.type===t[0]}).length;
+      return '<button class="tab'+(state.tab===t[0]?' on':'')+'" role="tab" aria-selected="'+(state.tab===t[0])+'" data-tab="'+t[0]+'">'+t[1]+'<em>'+c+'</em></button>';
+    }).join("");
+  }
+  function renderHist(){
+    var list = items.filter(function(i){return state.tab==="all"||i.type===state.tab});
+    var html="", m="";
+    list.forEach(function(i){
+      if(i.month!==m){ m=i.month; html+='<div class="month">'+m+'</div>'; }
+      var icCls = i.type==="sub"?"t-sub":i.type==="svc"?"t-svc":i.type==="ref"?"t-ref":"";
+      var ic = i.type==="sub"?ICON.sub:i.type==="svc"?(i.id==="r1"?ICON.ret:ICON.svc):i.type==="ref"?ICON.ref:ICON.order;
+      html+='<button class="row'+(state.hl&&state.hl.indexOf(i.id)>-1?' hl':'')+'" data-item="'+i.id+'">'+
+        '<span class="row-ic '+icCls+'">'+ic+'</span>'+
+        '<span class="row-t"><b>'+esc(i.title)+'</b><span>'+esc(i.note)+'</span></span>'+
+        '<span class="row-s"><b class="'+(i.sum<0?'plus':'')+'">'+(i.sum<0?'+ ':'− ')+fmt(i.sum)+'</b><span>'+esc(i.date.split(",")[0])+'</span></span></button>';
+    });
+    $("#hist").innerHTML = html;
+    $("#histEmpty").style.display = list.length ? "none" : "block";
+  }
+
+  /* ---------- Сводка и услуги ---------- */
+  function refresh(){
+    var clubOn = state.club==="trial", insOn = state.ins==="on";
+    var active = (clubOn?1:0)+(insOn?1:0);
+    $("#activeCount").textContent = active ? (active===1?"1 платная услуга":active+" платные услуги") : "Платных услуг нет";
+    var refunds = items.filter(function(i){return i.sum<0}).reduce(function(a,i){return a-i.sum},0);
+    $("#refundTotal").textContent = " "+fmt(refunds);
+    if(clubOn){
+      $("#nextSum").innerHTML='199 <span class="cur">₽</span>';
+      $("#nextMeta").innerHTML='<b>12 октября</b> · WB Клуб, после пробного месяца · с карты Мир •• 4417';
+      $("#hero").classList.remove("empty");
+    } else {
+      $("#nextSum").textContent='Ничего не запланировано';
+      $("#nextMeta").innerHTML='Автоматических списаний нет. Деньги спишутся только за новые заказы.';
+      $("#hero").classList.add("empty");
+    }
+    $("#trialNotice").style.display = clubOn ? "" : "none";
+
+    var club=$("#svc-club");
+    club.classList.toggle("off",!clubOn);
+    if(clubOn){
+      $("#clubBadge").className="badge b-trial"; $("#clubBadge").textContent="Пробный";
+      $("#clubNextLabel").textContent="Следующее списание"; $("#clubNext").textContent="199 ₽ · 12 октября";
+      $("#clubAfter").textContent="199 ₽ каждый месяц"; $("#clubLeft").textContent="осталось 6 дней";
+      $("#clubActs").innerHTML='<button class="btn btn-g" data-open="club-info">Что даёт</button><button class="btn btn-d" data-action="cancel-club">Отключить</button>';
+    } else {
+      $("#clubBadge").className="badge b-off"; $("#clubBadge").textContent="Отключён";
+      $("#clubNextLabel").textContent="Работает до"; $("#clubNext").textContent="12 октября";
+      $("#clubAfter").textContent="Больше не спишем"; $("#clubLeft").textContent="скидки ещё 6 дней";
+      $("#clubActs").innerHTML='<button class="btn btn-s" data-action="restore-club">Включить снова</button>';
+    }
+    var ins=$("#svc-ins");
+    ins.classList.toggle("off",!insOn);
+    if(insOn){
+      $("#insBadge").className="badge b-on"; $("#insBadge").textContent="Действует";
+      $("#insRefLabel").textContent="Отказаться с возвратом"; $("#insRef").textContent="до 17 октября";
+      $("#insLeft").textContent="ещё 11 дней на отказ"; $("#insBar").style.width="21%";
+      $("#insActs").innerHTML='<button class="btn btn-g" data-open="ins-info">Что покрывает</button><button class="btn btn-d" data-action="cancel-ins">Отказаться</button>';
+    } else {
+      $("#insBadge").className="badge b-ref"; $("#insBadge").textContent="Возвращаем";
+      $("#insRefLabel").textContent="Возврат 149 ₽"; $("#insRef").textContent="на Мир •• 4417, до 10 дней";
+      $("#insLeft").textContent="отказ оформлен 6 октября"; $("#insBar").style.width="100%";
+      $("#insActs").innerHTML='<button class="btn btn-g" data-open="ins-done">Подробнее о возврате</button>';
+    }
+    $("#svcEmpty").style.display = (!clubOn && !insOn) ? "block" : "none";
+    renderTabs(); renderHist();
+  }
+
+  /* ---------- Шторка ---------- */
+  var lastFocus=null;
+  function openSheet(html){
+    lastFocus=document.activeElement;
+    $("#sheetBody").innerHTML=html;
+    $("#scrim").classList.add("on"); $("#sheet").classList.add("on");
+    setTimeout(function(){ var f=$("#sheet").querySelector("input")||$("#sheetX"); f&&f.focus(); },60);
+  }
+  function closeSheet(){
+    $("#scrim").classList.remove("on"); $("#sheet").classList.remove("on");
+    if(lastFocus&&lastFocus.focus) lastFocus.focus();
+  }
+  var toastT;
+  function toast(text, undo){
+    $("#toastText").textContent=text;
+    var u=$("#toastUndo"); u.hidden=!undo; u.onclick=function(){ undo(); hideToast(); };
+    $("#toast").classList.add("on"); clearTimeout(toastT); toastT=setTimeout(hideToast,4200);
+  }
+  function hideToast(){ $("#toast").classList.remove("on") }
+
+  function itemSheet(id){
+    var i=items.filter(function(x){return x.id===id})[0]; if(!i) return;
+    var act="";
+    if(i.act==="cancel-club" && state.club==="trial") act='<button class="btn btn-d btn-l" data-action="cancel-club">Отключить WB Клуб</button>';
+    if(i.act==="cancel-ins" && state.ins==="on") act='<button class="btn btn-d btn-l" data-action="cancel-ins">Отказаться и вернуть 149 ₽</button>';
+    openSheet(
+      '<h3 id="sheetTitle">'+esc(i.title)+'</h3><p class="s-sub">'+TYPE_LABEL[i.type]+' · '+esc(i.date)+'</p>'+
+      '<div class="kv"><div><span>Сумма</span><b>'+(i.sum<0?'+ ':'')+fmt(i.sum)+'</b></div><div><span>Карта</span><b>Мир •• 4417</b></div><div><span>Статус</span><b>'+i.status+'</b></div></div>'+
+      '<div class="bank"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="12" rx="3" stroke="#8b8c8f" stroke-width="1.8"/><path d="M3 10h18" stroke="#8b8c8f" stroke-width="1.8"/></svg><span>В выписке банка выглядит так:<br><code>'+esc(i.bank)+'</code></span></div>'+
+      '<div class="why"><b>За что списали</b>'+esc(i.why)+'</div>'+
+      '<div class="s-acts">'+act+'<button class="btn btn-g btn-l" data-open="notme">Я этого не оформлял(а)</button></div>'
+    );
+  }
+
+  var SHEETS = {
+    "club-keep": function(){ closeSheet(); toast("Хорошо, напомним за день до списания"); },
+    "club-info": function(){ openSheet('<h3 id="sheetTitle">Что даёт WB Клуб</h3><p class="s-sub">199 ₽ в месяц после пробного периода</p><ul class="lose"><li>Клубные скидки на товары, до 31%</li><li>2 доставки курьером в месяц</li><li>Смена пункта выдачи в течение 30 минут после заказа</li><li>Продление хранения и выделенная поддержка</li><li>+3% к кешбэку WB Кошелька</li></ul><div class="why"><b>Окупается ли клуб</b>За сентябрь клубные скидки сэкономили вам 312 ₽ при стоимости 1 ₽. С 12 октября клуб будет стоить 199 ₽ в месяц.</div><div class="s-acts"><button class="btn btn-p btn-l" data-open="club-keep">Оставить клуб</button><button class="btn btn-g btn-l" data-action="cancel-club">Отключить</button></div>'); },
+    "ins-info": function(){ openSheet('<h3 id="sheetTitle">Страховка заказа</h3><p class="s-sub">149 ₽ за заказ от 3 октября</p><ul class="lose"><li>Поломка робота-пылесоса в течение года по вине владельца</li><li>Повреждение при падении или попадании жидкости</li><li>Выплата или ремонт по заявлению в приложении</li></ul><div class="why"><b>Можно отказаться</b>В течение 14 дней после покупки, до 17 октября. Деньги вернутся на карту до 10 дней.</div><div class="s-acts"><button class="btn btn-d btn-l" data-action="cancel-ins">Отказаться и вернуть 149 ₽</button><button class="btn btn-g btn-l" data-close>Оставить страховку</button></div>'); },
+    "ins-done": function(){ openSheet('<h3 id="sheetTitle">Возврат за страховку</h3><p class="s-sub">Отказ оформлен 6 октября</p><div class="kv"><div><span>Сумма</span><b>149 ₽</b></div><div><span>Куда</span><b>Мир •• 4417</b></div><div><span>Срок</span><b>до 16 октября</b></div></div><div class="why"><b>Деньги уже в пути</b>Банк зачисляет возврат до 10 дней. Если не придёт, напишите в поддержку: номер отказа подставим сами.</div><div class="s-acts"><button class="btn btn-g btn-l" data-close>Понятно</button></div>'); },
+    "what": function(){ openSheet('<h3 id="sheetTitle">Какие бывают списания</h3><p class="s-sub">Всё, за что Wildberries может списать деньги с карты</p>'+
+      '<div class="opt"><span class="row-ic">'+ICON.order+'</span><div><b>Заказы</b><span>При оформлении или после выкупа товара</span></div></div>'+
+      '<div class="opt"><span class="row-ic t-sub">клуб</span><div><b>WB Клуб</b><span>1 ₽ за пробный месяц, дальше 199 ₽ каждый месяц</span></div></div>'+
+      '<div class="opt"><span class="row-ic t-svc">'+ICON.svc+'</span><div><b>Страховка заказа</b><span>Только если отмечена при оформлении, отказ 14 дней</span></div></div>'+
+      '<div class="opt"><span class="row-ic t-svc">'+ICON.ret+'</span><div><b>Обратная доставка</b><span>При возврате товара без брака</span></div></div>'+
+      '<div class="s-acts"><button class="btn btn-g btn-l" data-close>Понятно</button></div>'); },
+    "find": function(){ openSheet('<h3 id="sheetTitle">Найдём списание по сумме</h3><p class="s-sub">Введите сумму из банковского уведомления</p><label class="sr" for="amt">Сумма</label><div class="amount-field"><input id="amt" inputmode="decimal" placeholder="Например, 149" autocomplete="off"><span>₽</span></div><p class="hint">Попробуйте 199, 149 или 100</p><div class="res" id="res"></div><div class="s-acts"><button class="btn btn-g btn-l" data-open="notme">Не нашли? Сообщить о списании</button></div>');
+      $("#amt").addEventListener("input", onFind); },
+    "notme": function(){ openSheet('<h3 id="sheetTitle">Не узнаёте списание?</h3><p class="s-sub">Выберите, что подходит, и мы разберёмся без пересылки выписок</p>'+
+      '<button class="opt" data-pick="Отключим услугу и вернём деньги за неиспользованный период"><div><b>Услугу подключили без моего согласия</b><span>Клуб, страховка или другая платная опция</span></div><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>'+
+      '<button class="opt" data-pick="Проверим заказ и вернём деньги, если товар не выдан"><div><b>Списали за заказ, который я не получил(а)</b><span>Отменён, потерян или не пришёл</span></div><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>'+
+      '<button class="opt" data-pick="Заблокируем подозрительный вход и проверим все операции"><div><b>Не делал(а) покупок вообще</b><span>Возможно, в аккаунт вошёл кто-то другой</span></div><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>'); },
+    "about": function(){ openSheet(ABOUT); }
+  };
+
+  function onFind(e){
+    var v = parseFloat(String(e.target.value).replace(",",".").replace(/\s/g,""));
+    var box=$("#res");
+    if(!v){ box.innerHTML=""; state.hl=null; renderHist(); return; }
+    var found = items.filter(function(i){return Math.abs(i.sum)===v});
+    var upcoming = (v===199 && state.club==="trial");
+    if(!found.length && !upcoming){
+      state.hl=null; renderHist();
+      box.innerHTML='<div class="res-none"><b>Списаний на '+fmt(v)+' не нашли</b>За последние 3 месяца Wildberries не списывал эту сумму с карт в профиле. Проверьте название получателя в банке: возможно, это другой магазин или подписка, оформленная в другом приложении.</div>';
+      return;
+    }
+    state.hl = found.map(function(i){return i.id}); renderHist();
+    var html = found.map(function(i){return '<button class="res-item" data-item="'+i.id+'"><div><b>'+esc(i.title)+'</b><span>'+esc(i.date)+'</span></div><b>'+fmt(i.sum)+'</b></button>'}).join("");
+    if(upcoming) html += '<button class="res-item" data-open="club-info"><div><b>WB Клуб, после пробного месяца</b><span>Запланировано на 12 октября</span></div><b>199 ₽</b></button>';
+    box.innerHTML = html;
+  }
+
+  function cancelClub(){
+    openSheet('<h3 id="sheetTitle">Отключить WB Клуб?</h3><p class="s-sub">Больше не спишем 199 ₽. Клуб будет работать до 12 октября</p><ul class="lose"><li>Клубные скидки и +3% кешбэка до 12 октября</li><li>После 12 октября обычные цены и стандартная доставка</li><li>Включить снова можно в любой момент</li></ul><div class="s-acts"><button class="btn btn-d btn-l" data-action="confirm-club">Отключить</button><button class="btn btn-g btn-l" data-close>Оставить</button></div>');
+  }
+  function cancelIns(){
+    openSheet('<h3 id="sheetTitle">Отказаться от страховки?</h3><p class="s-sub">Вернём 149 ₽ на карту Мир •• 4417 в течение 10 дней</p><div class="kv"><div><span>Заказ</span><b>от 3 октября</b></div><div><span>Товар</span><b>Робот-пылесос Kitfort KT-5132</b></div><div><span>Возврат</span><b>149 ₽</b></div></div><div class="s-acts"><button class="btn btn-d btn-l" data-action="confirm-ins">Отказаться и вернуть деньги</button><button class="btn btn-g btn-l" data-close>Оставить страховку</button></div>');
+  }
+
+  document.addEventListener("click", function(e){
+    var t=e.target.closest("[data-open],[data-action],[data-item],[data-tab],[data-close],[data-pick]");
+    if(!t) return;
+    if(t.tagName==="A") e.preventDefault();
+    if(t.hasAttribute("data-close")){ closeSheet(); return; }
+    if(t.dataset.tab){ state.tab=t.dataset.tab; renderTabs(); renderHist(); return; }
+    if(t.dataset.item){ itemSheet(t.dataset.item); return; }
+    if(t.dataset.pick){ closeSheet(); toast("Обращение создано. "+t.dataset.pick); return; }
+    if(t.dataset.open && SHEETS[t.dataset.open]){ SHEETS[t.dataset.open](); return; }
+    var a=t.dataset.action;
+    if(a==="cancel-club") cancelClub();
+    if(a==="cancel-ins") cancelIns();
+    if(a==="confirm-club"){ state.club="off"; closeSheet(); refresh(); toast("WB Клуб отключён. Работает до 12 октября", function(){ state.club="trial"; refresh(); }); }
+    if(a==="confirm-ins"){
+      state.ins="off"; closeSheet();
+      items.unshift({id:"f2", type:"ref", month:"Октябрь", date:"6 октября, только что", title:"Возврат за страховку", note:"Отказ от страховки заказа от 3 октября", sum:-149, bank:"WILDBERRIES возврат 149.00", why:"Вы отказались от страховки в течение 14 дней. Деньги вернутся на Мир •• 4417 до 10 дней.", status:"Возвращается"});
+      refresh(); toast("Отказ оформлен, вернём 149 ₽");
+    }
+    if(a==="restore-club"){ state.club="trial"; refresh(); toast("WB Клуб снова включён"); }
+    if(a==="restore"){ state.club="trial"; state.ins="on"; items=items.filter(function(i){return i.id!=="f2"}); refresh(); toast("Демо сброшено"); }
+  });
+  $("#scrim").addEventListener("click", closeSheet);
+  $("#sheetX").addEventListener("click", closeSheet);
+  document.addEventListener("keydown", function(e){ if(e.key==="Escape") closeSheet(); });
+
+
+  var ABOUT =
+    '<div class="about about-art"><span>Концепт</span><svg viewBox="0 0 210 140" fill="none"><rect x="20" y="30" width="110" height="110" rx="24" fill="#fff" opacity=".95"/><rect x="38" y="52" width="60" height="10" rx="5" fill="#e6ccff"/><rect x="38" y="72" width="74" height="8" rx="4" fill="#efeff5"/><rect x="38" y="88" width="50" height="8" rx="4" fill="#efeff5"/><circle cx="150" cy="60" r="36" fill="#fff" opacity=".9"/><path d="M134 60l11 11 21-23" stroke="#00a839" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg></div>'+
+    '<div class="about"><h3 id="sheetTitle">Платежи и подписки</h3><p class="s-sub">Концепт экрана для Wildberries</p>'+
+    '<div class="about-grid">'+
+      '<div><b>Проблема</b>Покупатели видят в банке списание WILDBERRIES 199 ₽ или 149 ₽ и не могут понять, что это: клуб после «месяца за 1 ₽», страховка заказа или обратная доставка. Отключение спрятано, поэтому люди пишут в поддержку, отвязывают карту или оспаривают платёж в банке.</div>'+
+      '<div><b>Гипотеза</b>Если собрать все списания и платные услуги на одном экране с расшифровкой и отключением в одно касание, станет меньше обращений «за что списали», отвязок карт и банковских оспариваний.</div>'+
+      '<div><b>Решение</b>Сводка «ближайшее списание», напоминание до конца пробного периода, карточки услуг со сроками, история с видом «как в банке» и поиск списания по сумме.</div>'+
+      '<div><b>Как измерить</b>A/B-тест: доля обращений по теме списаний, доля удалённых карт, число оспариваний в банке, удержание WB Клуба после пробного месяца.</div>'+
+    '</div>'+
+    '<p class="author">Дизайн: Максим Кощеев, UX/UI и продуктовый дизайнер · <a href="https://portfoliomaksim.framer.website/" target="_blank" rel="noopener">портфолио</a> · <a href="https://t.me/maksim_koshcheev" target="_blank" rel="noopener">@maksim_koshcheev</a><br>Концепт не связан с компанией Wildberries, данные вымышлены.</p>'+
+    '<div class="s-acts"><button class="btn btn-p btn-l" data-close>Смотреть прототип</button></div></div>';
+
+  refresh();
+  setTimeout(function(){ SHEETS.about(); }, 350);
+})();
+</script>
+</body>
+</html>
