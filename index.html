@@ -77,8 +77,8 @@ h1{font-size:28px;font-weight:700;line-height:1.15;margin-bottom:6px}
 .link:hover{color:var(--accent-hover)}
 
 /* ---------- Сводка (hero) ---------- */
-.hero{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:0;padding:0;overflow:hidden;position:relative}
-.hero-body{padding:28px 28px 26px}
+.hero{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:0;padding:0;overflow:hidden;position:relative;min-height:220px}
+.hero-body{padding:28px 28px 26px;position:relative;z-index:1}
 .over{font-size:12px;letter-spacing:.6px;text-transform:uppercase;color:var(--text-2);font-weight:500;margin-bottom:10px}
 .next-sum{font-size:40px;font-weight:700;line-height:1;letter-spacing:-.5px}
 .next-sum .cur{font-size:28px}
@@ -88,8 +88,8 @@ h1{font-size:28px;font-weight:700;line-height:1.15;margin-bottom:6px}
 .chip{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:var(--r-full);background:var(--bg-page);font-size:13px;font-weight:500}
 .chip i{width:8px;height:8px;border-radius:50%;background:var(--accent);display:inline-block}
 .chip.ok i{background:var(--green)}
-.hero-art{background:linear-gradient(160deg,#fbf0ff 0%,#feecfd 55%,#fff 100%);position:relative;min-height:220px}
-.hero-art svg{position:absolute;right:-30px;bottom:-24px;width:330px;height:auto}
+.hero-art{position:relative;min-height:220px}
+.hero-art img{position:absolute;right:0;bottom:0;width:377px;height:220px;max-width:none;display:block}
 .hero.empty .next-sum{font-size:28px}
 
 /* ---------- Напоминание о пробном периоде ---------- */
@@ -245,8 +245,8 @@ h1{font-size:28px;font-weight:700;line-height:1.15;margin-bottom:6px}
 @media (max-width:760px){
   .svc-grid{grid-template-columns:minmax(0,1fr)}
   .hero{grid-template-columns:minmax(0,1fr)}
-  .hero-art{min-height:0;height:120px;order:-1}
-  .hero-art svg{width:220px;right:-10px;bottom:-40px}
+  .hero-art{min-height:0;height:150px;order:-1}
+  .hero-art img{width:257px;height:150px;right:50%;transform:translateX(50%)}
 }
 @media (max-width:560px){
   body{font-size:15px}
@@ -330,36 +330,7 @@ h1{font-size:28px;font-weight:700;line-height:1.15;margin-bottom:6px}
               <span class="chip ok"><i></i>Возвращено за месяц: <span id="refundTotal">&nbsp;4 590 ₽</span></span>
             </div>
           </div>
-          <div class="hero-art" aria-hidden="true">
-            <svg viewBox="0 0 330 250" fill="none">
-              <defs>
-                <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#b240ff"/><stop offset="1" stop-color="#ff40da"/></linearGradient>
-                <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#f2e1ff"/></linearGradient>
-                <linearGradient id="g3" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e6ccff"/><stop offset="1" stop-color="#fff"/></linearGradient>
-                <filter id="sh" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="12" stdDeviation="12" flood-color="#9715f4" flood-opacity=".18"/></filter>
-              </defs>
-              <!-- календарь -->
-              <g filter="url(#sh)" transform="rotate(-8 90 120)">
-                <rect x="40" y="70" width="120" height="130" rx="26" fill="url(#g2)"/>
-                <rect x="40" y="70" width="120" height="36" rx="26" fill="url(#g1)"/>
-                <rect x="40" y="90" width="120" height="16" fill="url(#g1)"/>
-                <text x="100" y="172" text-anchor="middle" font-family="Roboto,Arial" font-weight="700" font-size="54" fill="#9715f4">12</text>
-                <circle cx="72" cy="66" r="7" fill="#e6ccff"/><circle cx="128" cy="66" r="7" fill="#e6ccff"/>
-              </g>
-              <!-- чек -->
-              <g filter="url(#sh)" transform="rotate(6 220 130)">
-                <path d="M170 40h110a14 14 0 0114 14v160l-14-10-14 10-14-10-14 10-14-10-14 10-14-10-14 10-14-10V54a14 14 0 0114-14z" fill="#fff"/>
-                <rect x="190" y="66" width="70" height="10" rx="5" fill="#e6ccff"/>
-                <rect x="190" y="88" width="88" height="8" rx="4" fill="#efeff5"/>
-                <rect x="190" y="104" width="60" height="8" rx="4" fill="#efeff5"/>
-                <rect x="190" y="120" width="76" height="8" rx="4" fill="#efeff5"/>
-                <rect x="190" y="148" width="88" height="26" rx="13" fill="url(#g1)"/>
-                <text x="234" y="166" text-anchor="middle" font-family="Roboto,Arial" font-weight="700" font-size="14" fill="#fff">199 ₽</text>
-              </g>
-              <!-- монета-галочка -->
-              <g filter="url(#sh)"><circle cx="150" cy="200" r="30" fill="url(#g3)"/><circle cx="150" cy="200" r="22" fill="#fff"/><path d="M139 200l8 8 14-15" stroke="#00a839" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></g>
-            </svg>
-          </div>
+          <div class="hero-art" aria-hidden="true"><img src="hero-calendar.webp" width="377" height="220" alt=""></div>
         </section>
 
         <!-- Напоминание -->
